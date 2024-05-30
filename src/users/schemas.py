@@ -26,3 +26,21 @@ class CreateTaskResponse(BaseModel):
     task_id: int
     success: bool
     message: str
+
+class CreateSubscribtion(BaseModel):
+    user_login: str
+    collar_id: str
+    accessToken: str
+
+class ResponseSubscribtion(BaseModel):
+    success: bool
+    accessToken: str
+
+class DeleteSubscribtion(BaseModel):
+    user_login: str
+    collar_id: str
+    accessToken: str
+
+class ResponseDeleteSubscribtion(BaseModel):
+    success: bool
+    accessToken: str
