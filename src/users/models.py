@@ -14,3 +14,10 @@ class tasksT(BaseDBModel):
     user_token = Column(String, unique=False, index=True)
     colar_id = Column(Integer, unique=False, index=True)
     text = Column(String, unique=False, index=False)
+
+class subsT(BaseDBModel):
+    __tablename__ = "subscriptions"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_login = Column(String, unique=False, index=False)
+    collar_id = Column(String, unique=False, index=False)
+    accessToken = Column(String, unique=False, index=False)
