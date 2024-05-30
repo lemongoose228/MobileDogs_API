@@ -70,3 +70,10 @@ def delete_subscr(db: Session, subscr: schemas.DeleteSubscribtion) -> Optional[m
     db.delete(subscr_to_delete)
     db.commit()
     return True
+
+def get_user_subscr(db: Session, user_login: str, accessToken: str) -> object:
+    result = []
+    sp = db.query(models.subsT).filter_by(user_login=user_login, accessToken=accessToken).all()
+    for i in sp:
+        result.append({"subscription_id": str(i.id), "user": user_login, "collar_id": str(i.collar_id)})
+    return result
