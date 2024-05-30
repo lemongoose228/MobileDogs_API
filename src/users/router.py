@@ -3,6 +3,10 @@ import users.schemas as schemas
 import users.exceptions as exceptions
 from dependecies import session
 from database import DBSession
+import devices.exceptions as exceptions1
+import devices.schemas as schemas1
+import devices.crud as crud1
+import devices.exceptions as exceptions1
 
 from fastapi import APIRouter, Depends
 
@@ -29,13 +33,14 @@ async def UserLogin(user: schemas.LoginUser, db: DBSession = Depends(session)):
     result = schemas.ResponseUserLogin(success=True, message="Вы успешно вошли в аккаунт")
     return result
 
-
-@router.post("/user/creatTask", response_model=schemas.ResponseUser)
+@router.post("/user/creatTask", response_model=schemas.CreateTaskResponse)
 async def UserCreateTask(task: schemas.CreateTask, db: DBSession = Depends(session)):
     if not crud1.find_collar(db, task.collar_id):
         raise exceptions1.NotExistCollar()
-    if not crud.find_user(db, task.login):
-        raise exceptions.WrongLogin()
+    if not crud.find_token(db, task.accessToken):
+        raise exceptions.WrongToken()
 
-    result = schemas.ResponseUser(accessToken=task.accessToken, colar_token=task.colar_token, task=task.text)
+    task_from_db = crud.create_task(db, task)
+
+    result = schemas.CreateTaskResponse(task_id=task_from_db.id, success=True, message="Вы успешно создали задание")
     return result
