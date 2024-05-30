@@ -16,7 +16,6 @@ def find_user(db: Session, login: str) -> Optional[models.usersT]:
     user = db.query(models.usersT).filter_by(login=login).first()
     return user
 
-
 def check_password(db: Session, login: str, password: str) -> Optional[models.usersT]:
     user = db.query(models.usersT).filter_by(login=login).first()
 
@@ -37,7 +36,6 @@ def find_token(db: Session, accessToken: str) -> Optional[models.usersT]:
     user = db.query(models.usersT).filter_by(accessToken=accessToken).first()
 
     return user
-
 
 def create_task(db: Session, task: schemas.CreateTask) -> Optional[models.usersT]:
     db.task = models.tasksT(user_token=task.accessToken, colar_id=task.collar_id, text=task.task)
