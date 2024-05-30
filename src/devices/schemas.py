@@ -9,3 +9,9 @@ class CreateDog(Dog):
 class ResponseDog(BaseModel):
     success: bool
     collar_token: str
+
+class GetDogsSubscribers(BaseModel):
+    collar_id: str
+
+class GetDogsSubscribersResponse(BaseModel):
+    subs: object
