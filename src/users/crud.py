@@ -16,6 +16,7 @@ def find_user(db: Session, login: str) -> Optional[models.usersT]:
     user = db.query(models.usersT).filter_by(login=login).first()
     return user
 
+
 def check_password(db: Session, login: str, password: str) -> Optional[models.usersT]:
     user = db.query(models.usersT).filter_by(login=login).first()
 
@@ -24,7 +25,7 @@ def check_password(db: Session, login: str, password: str) -> Optional[models.us
     else:
         return None
 
-def check_token(db: Session, login: str, accessToken: str) -> Optional[models.usersT]:
+def check_tokenByLogin(db: Session, login: str, accessToken: str) -> Optional[models.usersT]:
     user = db.query(models.usersT).filter_by(login=login).first()
 
     if accessToken == user.accessToken:
@@ -32,8 +33,14 @@ def check_token(db: Session, login: str, accessToken: str) -> Optional[models.us
     else:
         return None
 
+def find_token(db: Session, accessToken: str) -> Optional[models.usersT]:
+    user = db.query(models.usersT).filter_by(accessToken=accessToken).first()
+
+    return user
+
+
 def create_task(db: Session, task: schemas.CreateTask) -> Optional[models.usersT]:
-    db.task = models.tasksT(user_token=task.accessToken, colar_id=task.colar_id, text=task.text)
+    db.task = models.tasksT(user_token=task.accessToken, colar_id=task.collar_id, text=task.task)
     db.add(db.task)
     db.commit()
     db.refresh(db.task)
