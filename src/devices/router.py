@@ -1,6 +1,8 @@
 import devices.crud as crud
 import devices.schemas as schemas
 import devices.exceptions as exceptions
+import users.crud as crud1
+import users.exceptions as exceptions1
 from dependecies import session
 from database import DBSession
 from fastapi import APIRouter, Depends
@@ -14,3 +16,14 @@ async def DogsRegistration(dog: schemas.CreateDog, db: DBSession = Depends(sessi
     new_dog = crud.create_collar(db, dog)
     result = schemas.ResponseDog(success=True, collar_token=new_dog.collar_token)
     return result
+
+@router.post("/user/getDogsSubscribers", response_model=schemas.GetDogsSubscribersResponse)
+async def dog_subscriptions(data_for_subs: schemas.GetDogsSubscribers, db: DBSession = Depends(session)):
+    if not crud.find_collar(db, data_for_subs.collar_id):
+        raise exceptions1.DogDoesntExist()
+
+    subs_from_db = crud.get_dog_subscr(db, data_for_subs.collar_id)
+
+    result = schemas.GetDogsSubscribersResponse(subs=subs_from_db)
+    return result
+
