@@ -14,3 +14,10 @@ def create_collar(db: Session, dog: schemas.CreateDog) -> Optional[models.dogsT]
 def find_collar(db: Session, collar_id: str) -> Optional[models.dogsT]:
     dog = db.query(models.dogsT).filter_by(collar_id=collar_id).first()
     return dog
+
+def get_dog_subscr(db: Session, collar_id: str) -> object:
+    result = []
+    sp = db.query(models1.subsT).filter_by(collar_id=collar_id).all()
+    for i in sp:
+        result.append({"subscription_id": str(i.id), "collar_id": collar_id, "user_login": str(i.user_login)})
+    return result
