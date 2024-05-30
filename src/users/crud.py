@@ -65,3 +65,8 @@ def find_subscr(db: Session, user_login: str, collar_id: str) -> Optional[models
     subscr = db.query(models.subsT).filter_by(user_login=user_login, collar_id=collar_id).first()
     return subscr
 
+def delete_subscr(db: Session, subscr: schemas.DeleteSubscribtion) -> Optional[models.subsT]:
+    subscr_to_delete = db.query(models.subsT).filter_by(user_login=subscr.user_login, collar_id=subscr.collar_id).first()
+    db.delete(subscr_to_delete)
+    db.commit()
+    return True
