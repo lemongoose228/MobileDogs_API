@@ -45,6 +45,16 @@ async def UserCreateTask(task: schemas.CreateTask, db: DBSession = Depends(sessi
     result = schemas.CreateTaskResponse(task_id=task_from_db.id, success=True, message="Вы успешно создали задание")
     return result
 
+@router.post("/user/showDogsTasks", response_model=schemas.showDogsTasksResponse)
+async def showDogsTasks(task: schemas.showDogsTasks, db: DBSession = Depends(session)):
+    if not crud1.find_collar(db, task.collar_id):
+        raise exceptions1.NotExistCollar()
+
+    task_from_db = crud.get_tasks(db, task.collar_id)
+
+    result = schemas.showDogsTasksResponse(tasks=task_from_db)
+    return result
+
 @router.post("/user/subscribe", response_model=schemas.ResponseSubscribtion)
 async def SudscrCreate(subscr: schemas.CreateSubscribtion, db: DBSession = Depends(session)):
     if not crud1.find_collar(db, subscr.collar_id):
