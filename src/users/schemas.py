@@ -49,4 +49,4 @@ class DeleteSubscribtion(BaseModel):
 
 class ResponseDeleteSubscribtion(BaseModel):
     success: bool
-    accessToken: str
+    message: str
