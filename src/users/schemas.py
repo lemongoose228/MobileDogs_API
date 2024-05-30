@@ -27,6 +27,12 @@ class CreateTaskResponse(BaseModel):
     success: bool
     message: str
 
+class showDogsTasks(BaseModel):
+    collar_id: int
+
+class showDogsTasksResponse(BaseModel):
+    tasks: object
+
 class CreateSubscribtion(BaseModel):
     user_login: str
     collar_id: str
