@@ -15,3 +15,15 @@ class WrongPassword(HTTPException):
 class WrongToken(HTTPException):
     def __init__(self):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Неправильный токен")
+        
+class DogDoesntExist(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Такой собаки нет в базе данных")
+
+class UserDoesntExist(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Такого пользователя нет в базе данных")
+
+class ExistSubscr(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Вы уже подписаны на эту собаку")
