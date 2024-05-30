@@ -83,3 +83,15 @@ async def SudscrDelete(subscr: schemas.DeleteSubscribtion, db: DBSession = Depen
     if deleted_subscr:
         result = schemas.ResponseDeleteSubscribtion(success=True, message="Удаление выполнено успешно")
     return result
+
+@router.post("/user/getUsersSubscribtions", response_model=schemas.GetUserSubscribtionResponse)
+async def users_subscriptions(data_for_subs: schemas.GetUserSubscribtion, db: DBSession = Depends(session)):
+    if not crud.find_user(db, data_for_subs.user_login):
+        raise exceptions.UserDoesntExist()
+    if not crud.check_token(db, data_for_subs.user_login, data_for_subs.accessToken):
+        raise exceptions.WrongToken()
+
+    subs_from_db = crud.get_user_subscr(db, data_for_subs.user_login, data_for_subs.accessToken)
+
+    result = schemas.GetUserSubscribtionResponse(subs=subs_from_db)
+    return result
