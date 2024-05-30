@@ -44,3 +44,16 @@ async def UserCreateTask(task: schemas.CreateTask, db: DBSession = Depends(sessi
 
     result = schemas.CreateTaskResponse(task_id=task_from_db.id, success=True, message="Вы успешно создали задание")
     return result
+
+@router.post("/user/subscribe", response_model=schemas.ResponseSubscribtion)
+async def SudscrCreate(subscr: schemas.CreateSubscribtion, db: DBSession = Depends(session)):
+    if not crud1.find_collar(db, subscr.collar_id):
+        raise exceptions.DogDoesntExist()
+    if not crud.find_user(db, subscr.user_login):
+        raise exceptions.UserDoesntExist()
+    if crud.find_subscr(db, subscr.user_login, subscr.collar_id):
+        raise exceptions.ExistSubscr()
+    
+    new_subscr = crud.create_subscr(db, subscr)
+    result = schemas.ResponseSubscribtion(success=True, accessToken=new_subscr.accessToken)
+    return result
