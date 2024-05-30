@@ -45,3 +45,15 @@ def create_task(db: Session, task: schemas.CreateTask) -> Optional[models.usersT
     db.commit()
     db.refresh(db.task)
     return db.task
+
+def create_subscr(db: Session, subscr: schemas.CreateSubscribtion) -> Optional[models.subsT]:
+    db.subscr = models.subsT(user_login=subscr.user_login, collar_id=subscr.collar_id, accessToken=subscr.accessToken)
+    db.add(db.subscr)
+    db.commit()
+    db.refresh(db.subscr)
+    return db.subscr
+
+def find_subscr(db: Session, user_login: str, collar_id: str) -> Optional[models.subsT]:
+    subscr = db.query(models.subsT).filter_by(user_login=user_login, collar_id=collar_id).first()
+    return subscr
+
