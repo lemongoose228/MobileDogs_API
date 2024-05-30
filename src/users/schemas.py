@@ -1,19 +1,15 @@
 from pydantic import BaseModel
 
-class User(BaseModel):
+class CreateUser(BaseModel):
     login: str
-
-class CreateUser(User):
     password: str
 
-class Login(User):
-    password: str
-
-class ResponseUserLogin(BaseModel):
+class ResponseUser(BaseModel):
     success: bool
     accessToken: str
 
-class LoginUser(User):
+class LoginUser(BaseModel):
+    login: str
     password: str
     accessToken: str
 
@@ -23,5 +19,10 @@ class ResponseUserLogin(BaseModel):
 
 class CreateTask(BaseModel):
     accessToken: str
-    colar_id: str
+    collar_id: int
     task: str
+
+class CreateTaskResponse(BaseModel):
+    task_id: int
+    success: bool
+    message: str
