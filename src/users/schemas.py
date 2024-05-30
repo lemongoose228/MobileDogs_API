@@ -50,3 +50,10 @@ class DeleteSubscribtion(BaseModel):
 class ResponseDeleteSubscribtion(BaseModel):
     success: bool
     message: str
+
+class GetUserSubscribtion(BaseModel):
+    user_login: str
+    accessToken: str
+
+class GetUserSubscribtionResponse(BaseModel):
+    subs: object
