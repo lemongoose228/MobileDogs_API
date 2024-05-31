@@ -35,3 +35,7 @@ class SubscrDoesntExist(HTTPException):
 class WrongnTaskId(HTTPException):
     def __init__(self):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Такого задания нету")
+
+class WrongCode(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Неправильный код админа")
