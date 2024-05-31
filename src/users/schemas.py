@@ -33,6 +33,28 @@ class showDogsTasks(BaseModel):
 class showDogsTasksResponse(BaseModel):
     tasks: object
 
+class takeTask(BaseModel):
+    accessToken: str
+    task_id: int
+
+class takeTaskResponse(BaseModel):
+    success: bool
+    message: str
+
+
+class showUserTasks(BaseModel):
+    accessToken: str
+
+class showUserTasksResponse(BaseModel):
+    tasks: object
+
+class becomeAdmin(BaseModel):
+    code: str
+
+class becomeAdminResponse(BaseModel):
+    success: bool
+    accessToken: str
+
 class CreateSubscribtion(BaseModel):
     user_login: str
     collar_id: str
@@ -57,24 +79,3 @@ class GetUserSubscribtion(BaseModel):
 
 class GetUserSubscribtionResponse(BaseModel):
     subs: object
-
-class takeTask(BaseModel):
-    accessToken: str
-    task_id: int
-
-class takeTaskResponse(BaseModel):
-    success: bool
-    message: str
-
-class showUserTasks(BaseModel):
-    accessToken: str
-
-class showUserTasksResponse(BaseModel):
-    tasks: object
-
-class becomeAdmin(BaseModel):
-    code: str
-
-class becomeAdminResponse(BaseModel):
-    success: bool
-    accessToken: str
