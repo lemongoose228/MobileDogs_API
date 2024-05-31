@@ -115,9 +115,16 @@ def get_user_tasks(db: Session, accessToken: str) -> object:
 
     return result
 
-
 def check_code(code: str):
     if code == "yahochustatiadminomplsss2288642170604":
         return True
     else:
         return False
+
+def check_token(db: Session, login: str, accessToken: str) -> Optional[models.usersT]:
+    user = db.query(models.usersT).filter_by(login=login).first()
+
+    if accessToken == user.accessToken:
+        return user
+    else:
+        return None
