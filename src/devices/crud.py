@@ -21,3 +21,9 @@ def get_dog_subscr(db: Session, collar_id: str) -> object:
     for i in sp:
         result.append({"subscription_id": str(i.id), "collar_id": collar_id, "user_login": str(i.user_login)})
     return result
+
+def generate_coordinates(collar_id: str) -> tuple[float, float]:
+    latitude = random.uniform(-90, 90)
+    longitude = random.uniform(-180, 180)
+
+    return latitude, longitude
