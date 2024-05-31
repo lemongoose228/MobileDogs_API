@@ -15,7 +15,17 @@ class WrongPassword(HTTPException):
 class WrongToken(HTTPException):
     def __init__(self):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Неправильный токен")
-        
+
+class WrongnTaskId(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Такого задания нету")
+
+
+class WrongCode(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Неправильный код админа")
+
+
 class DogDoesntExist(HTTPException):
     def __init__(self):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Такой собаки нет в базе данных")
@@ -31,11 +41,3 @@ class ExistSubscr(HTTPException):
 class SubscrDoesntExist(HTTPException):
     def __init__(self):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Вы не были подписаны на эту собаку")
-
-class WrongnTaskId(HTTPException):
-    def __init__(self):
-        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Такого задания нету")
-
-class WrongCode(HTTPException):
-    def __init__(self):
-        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Неправильный код админа")
