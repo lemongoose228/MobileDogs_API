@@ -64,7 +64,7 @@ def get_tasks(db: Session, collar_id: int) -> object:
     sp = db.query(models.tasksT).filter_by(colar_id=collar_id).all()
     for i in sp:
         userLogin = find_loginByToken(db, i.user_token)
-        result.append({"task_id": str(i.id), "user": userLogin, "task": str(i.text)})
+        result.append({"task_id": str(i.id), "user": userLogin, "task": str(i.text), "taken": bool(i.taken)})
     return result
 
 def create_subscr(db: Session, subscr: schemas.CreateSubscribtion) -> Optional[models.subsT]:
