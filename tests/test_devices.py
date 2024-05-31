@@ -1,22 +1,19 @@
-import pytest
 #import src.devices.router as router
 #import src.users.router as router1
 from fastapi.testclient import TestClient
 import random
-from src.database import BaseDBModel, engine
+import string
+#from src.database import BaseDBModel, engine
 
-from src.main import app
+#import src.database
+
+from main import app
 
 client = TestClient(app)
 
-def generate_random_string(length):
-    letters = string.ascii_lowercase
-    rand_string = ''.join(random.choice(letters) for i in range(length))
-    return rand_string
-
 async def test_dogs_registration():
-    name = generate_random_string(7)
-    collar_id = random.randint(0, 200)
+    name = ''.join(random.choice(string.ascii_lowercase) for i in range(7))
+    collar_id = str(random.randint(0, 200))
 
     response = client.post("/dogs/register", json={
             "name": name,
@@ -24,7 +21,7 @@ async def test_dogs_registration():
     })
 
     while (response.status_code!=200):
-        name = generate_random_string(7)
+        name = rand_string = ''.join(random.choice(string.ascii_lowercase) for i in range(7))
         collar_id = random.randint(0, 200)
 
         response = client.post("/dogs/register", json={
