@@ -123,20 +123,20 @@ async def becomeAdmin(code: schemas.becomeAdmin, db: DBSession = Depends(session
 
     return result
 
-
 @router.post("/user/subscribe", response_model=schemas.ResponseSubscribtion)
 async def SudscrCreate(subscr: schemas.CreateSubscribtion, db: DBSession = Depends(session)):
-    if not crud1.find_collar(db, subscr.collar_id):
+    if not crud_dev.find_collar(db, subscr.collar_id):
         raise exceptions.DogDoesntExist()
     if not crud.find_user(db, subscr.user_login):
         raise exceptions.UserDoesntExist()
+    if not crud.check_token(db, subscr.user_login, subscr.accessToken):
+        raise exceptions.WrongToken()
     if crud.find_subscr(db, subscr.user_login, subscr.collar_id):
         raise exceptions.ExistSubscr()
-
+    
     new_subscr = crud.create_subscr(db, subscr)
     result = schemas.ResponseSubscribtion(success=True, accessToken=new_subscr.accessToken)
     return result
-
 
 @router.post("/user/unsubscribe", response_model=schemas.ResponseDeleteSubscribtion)
 async def SudscrDelete(subscr: schemas.DeleteSubscribtion, db: DBSession = Depends(session)):
@@ -154,7 +154,6 @@ async def SudscrDelete(subscr: schemas.DeleteSubscribtion, db: DBSession = Depen
         result = schemas.ResponseDeleteSubscribtion(success=True, message="Удаление выполнено успешно")
     return result
 
-
 @router.post("/user/getUsersSubscribtions", response_model=schemas.GetUserSubscribtionResponse)
 async def users_subscriptions(data_for_subs: schemas.GetUserSubscribtion, db: DBSession = Depends(session)):
     if not crud.find_user(db, data_for_subs.user_login):
@@ -166,4 +165,3 @@ async def users_subscriptions(data_for_subs: schemas.GetUserSubscribtion, db: DB
 
     result = schemas.GetUserSubscribtionResponse(subs=subs_from_db)
     return result
-
