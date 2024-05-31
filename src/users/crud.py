@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from users import models, schemas
+from devices import models as models1
+from devices import schemas as schemas1
 
 import uuid
 from typing import Optional
