@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 from devices import models, schemas
+from users import models as models1
 import uuid
 from typing import Optional
+import random
 
 def create_collar(db: Session, dog: schemas.CreateDog) -> Optional[models.dogsT]:
     collar_token = str(uuid.uuid4())[:8]
