@@ -166,3 +166,4 @@ async def users_subscriptions(data_for_subs: schemas.GetUserSubscribtion, db: DB
 
     result = schemas.GetUserSubscribtionResponse(subs=subs_from_db)
     return result
+
