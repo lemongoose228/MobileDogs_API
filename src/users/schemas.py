@@ -71,3 +71,10 @@ class showUserTasks(BaseModel):
 
 class showUserTasksResponse(BaseModel):
     tasks: object
+
+class becomeAdmin(BaseModel):
+    code: str
+
+class becomeAdminResponse(BaseModel):
+    success: bool
+    accessToken: str
