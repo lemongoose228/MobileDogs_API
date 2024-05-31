@@ -55,6 +55,7 @@ async def showDogsTasks(task: schemas.showDogsTasks, db: DBSession = Depends(ses
     result = schemas.showDogsTasksResponse(tasks=task_from_db)
     return result
 
+
 @router.post("/user/subscribe", response_model=schemas.ResponseSubscribtion)
 async def SudscrCreate(subscr: schemas.CreateSubscribtion, db: DBSession = Depends(session)):
     if not crud1.find_collar(db, subscr.collar_id):
@@ -94,4 +95,17 @@ async def users_subscriptions(data_for_subs: schemas.GetUserSubscribtion, db: DB
     subs_from_db = crud.get_user_subscr(db, data_for_subs.user_login, data_for_subs.accessToken)
 
     result = schemas.GetUserSubscribtionResponse(subs=subs_from_db)
+    return result
+
+@router.post("/user/takeTask", response_model=schemas.takeTaskResponse)
+async def takeTask(task: schemas.takeTask, db: DBSession = Depends(session)):
+    if not crud.find_token(db, task.accessToken):
+        raise exceptions.WrongToken()
+
+    if not crud.check_taskId(db, task.task_id):
+        raise exceptions.WrongnTaskId()
+
+    crud.take_task(db, task)
+
+    result = schemas.takeTaskResponse(success=True, message='Вы успшно взяли задание')
     return result
