@@ -119,3 +119,13 @@ async def showDogsTasks(task: schemas.showUserTasks, db: DBSession = Depends(ses
 
     result = schemas.showUserTasksResponse(tasks=task_from_db)
     return result
+
+@router.post("/user/becomeAdmin", response_model=schemas.becomeAdminResponse)
+async def becomeAdmin(code: schemas.becomeAdmin, db: DBSession = Depends(session)):
+    admin = crud.find_user(db, "admin")
+    if crud.check_code(code.code):
+        result = schemas.becomeAdminResponse(success=True, accessToken=admin.accessToken)
+    else:
+        raise exceptions.WrongCode()
+
+    return result
