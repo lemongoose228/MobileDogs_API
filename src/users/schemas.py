@@ -57,3 +57,11 @@ class GetUserSubscribtion(BaseModel):
 
 class GetUserSubscribtionResponse(BaseModel):
     subs: object
+
+class takeTask(BaseModel):
+    accessToken: str
+    task_id: int
+
+class takeTaskResponse(BaseModel):
+    success: bool
+    message: str
