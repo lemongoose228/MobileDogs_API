@@ -9,12 +9,38 @@ from fastapi import APIRouter, Depends
 
 router = APIRouter()
 
+import logging, sys
+from logging.handlers import TimedRotatingFileHandler
+import platform
+
+FORMATTER_STRING = f"%(asctime)s — %(name)s — %(levelname)s — %(message)s - {platform.platform()}"
+FORMATTER = logging.Formatter(FORMATTER_STRING)
+LOG_FILE = "tmp/devices_loggs.log"
+
+def get_logger(logger_name):
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.INFO)
+
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(FORMATTER)
+    logger.addHandler(console_handler)
+
+    file_handler = TimedRotatingFileHandler(LOG_FILE, when='midnight')
+    file_handler.setFormatter(FORMATTER)
+    logger.addHandler(file_handler)
+
+    return logger
+
+logger = get_logger('devices_logger')
+
 @router.post("/dogs/registr", response_model=schemas.ResponseDog)
 async def DogsRegistration(dog: schemas.CreateDog, db: DBSession = Depends(session)):
     if crud.find_collar(db, dog.collar_id):
         raise exceptions.BusyCollar()
     new_dog = crud.create_collar(db, dog)
     result = schemas.ResponseDog(success=True, collar_token=new_dog.collar_token)
+
+    logger.info(f'Ошейник с id {dog.collar_id} успешно зарегистрирован')
     return result
 
 @router.post("/user/getDogsSubscribers", response_model=schemas.GetDogsSubscribersResponse)
