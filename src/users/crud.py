@@ -112,3 +112,10 @@ def get_user_tasks(db: Session, accessToken: str) -> object:
         result.append({"collar_id": str(i.colar_id), "task_id": int(i.id), "task": str(i.text)})
 
     return result
+
+
+def check_code(code: str):
+    if code == "yahochustatiadminomplsss2288642170604":
+        return True
+    else:
+        return False
