@@ -65,3 +65,9 @@ class takeTask(BaseModel):
 class takeTaskResponse(BaseModel):
     success: bool
     message: str
+
+class showUserTasks(BaseModel):
+    accessToken: str
+
+class showUserTasksResponse(BaseModel):
+    tasks: object
