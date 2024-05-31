@@ -15,3 +15,10 @@ class GetDogsSubscribers(BaseModel):
 
 class GetDogsSubscribersResponse(BaseModel):
     subs: object
+
+class GetDogsPos(BaseModel):
+    collar_id: str
+
+class GetDogsPosResponse(BaseModel):
+    latitude: float
+    longitude: float
