@@ -109,3 +109,13 @@ async def takeTask(task: schemas.takeTask, db: DBSession = Depends(session)):
 
     result = schemas.takeTaskResponse(success=True, message='Вы успшно взяли задание')
     return result
+
+@router.post("/user/showUserTasks", response_model=schemas.showUserTasksResponse)
+async def showDogsTasks(task: schemas.showUserTasks, db: DBSession = Depends(session)):
+    if not crud.find_token(db, task.accessToken):
+        raise exceptions.WrongToken()
+
+    task_from_db = crud.get_user_tasks(db, task.accessToken)
+
+    result = schemas.showUserTasksResponse(tasks=task_from_db)
+    return result
