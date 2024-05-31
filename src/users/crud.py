@@ -54,8 +54,9 @@ def find_loginByToken(db: Session, accessToken: str) -> Optional[models.usersT]:
 
     return user.login
 
+
 def create_task(db: Session, task: schemas.CreateTask) -> Optional[models.usersT]:
-    db.task = models.tasksT(user_token=task.accessToken, colar_id=task.collar_id, text=task.task)
+    db.task = models.tasksT(user_token=task.accessToken, colar_id=task.collar_id, text=task.task, taken=False)
     db.add(db.task)
     db.commit()
     db.refresh(db.task)
@@ -67,7 +68,37 @@ def get_tasks(db: Session, collar_id: int) -> object:
     for i in sp:
         userLogin = find_loginByToken(db, i.user_token)
         result.append({"task_id": str(i.id), "user": userLogin, "task": str(i.text), "taken": bool(i.taken)})
+
     return result
+
+def take_task(db: Session, task: schemas.takeTask) -> Optional[models.responsesT]:
+    user = find_userByToken(db, task.accessToken)
+    taskById = check_taskId(db, task.task_id)
+
+    db.task = models.responsesT(do_user_id=user.id, task_id=task.task_id, answer='')
+
+    taskById.taken = True
+
+    db.add(db.task)
+    db.commit()
+    db.refresh(db.task)
+
+    return db.task
+
+def get_user_tasks(db: Session, accessToken: str) -> object:
+    result = []
+    sp = db.query(models.tasksT).filter_by(user_token=accessToken).all()
+    for i in sp:
+        result.append({"collar_id": str(i.colar_id), "task_id": int(i.id), "task": str(i.text)})
+    return result
+
+def check_code(code: str):
+    if code == "yahochustatiadminomplsss2288642170604":
+        return True
+    else:
+        return False
+
+
 
 def create_subscr(db: Session, subscr: schemas.CreateSubscribtion) -> Optional[models.subsT]:
     db.subscr = models.subsT(user_login=subscr.user_login, collar_id=subscr.collar_id, accessToken=subscr.accessToken)
@@ -92,34 +123,6 @@ def get_user_subscr(db: Session, user_login: str, accessToken: str) -> object:
     for i in sp:
         result.append({"subscription_id": str(i.id), "user": user_login, "collar_id": str(i.collar_id)})
     return result
-
-def take_task(db: Session, task: schemas.takeTask) -> Optional[models.responsesT]:
-    user = find_userByToken(db, task.accessToken)
-    taskById = check_taskId(db, task.task_id)
-
-    db.task = models.responsesT(do_user_id=user.id, task_id=task.task_id, answer='')
-
-    taskById.taken = True
-
-    db.add(db.task)
-    db.commit()
-    db.refresh(db.task)
-
-    return db.task
-
-def get_user_tasks(db: Session, accessToken: str) -> object:
-    result = []
-    sp = db.query(models.tasksT).filter_by(user_token=accessToken).all()
-    for i in sp:
-        result.append({"collar_id": str(i.colar_id), "task_id": int(i.id), "task": str(i.text)})
-
-    return result
-
-def check_code(code: str):
-    if code == "yahochustatiadminomplsss2288642170604":
-        return True
-    else:
-        return False
 
 def check_token(db: Session, login: str, accessToken: str) -> Optional[models.usersT]:
     user = db.query(models.usersT).filter_by(login=login).first()
