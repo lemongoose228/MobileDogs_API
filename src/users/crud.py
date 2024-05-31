@@ -105,3 +105,10 @@ def take_task(db: Session, task: schemas.takeTask) -> Optional[models.responsesT
 
     return db.task
 
+def get_user_tasks(db: Session, accessToken: str) -> object:
+    result = []
+    sp = db.query(models.tasksT).filter_by(user_token=accessToken).all()
+    for i in sp:
+        result.append({"collar_id": str(i.colar_id), "task_id": int(i.id), "task": str(i.text)})
+
+    return result
