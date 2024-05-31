@@ -7,3 +7,5 @@ class dogsT(BaseDBModel):
     name = Column(String, unique=False, index=True)
     collar_id = Column(String, unique=True, index=False)
     collar_token = Column(String, unique=True, index=False)
+
+
