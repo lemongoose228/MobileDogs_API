@@ -1,32 +1,27 @@
-#import src.devices.router as router
-#import src.users.router as router1
-from fastapi.testclient import TestClient
 import random
 import string
-#from src.database import BaseDBModel, engine
 
-#import src.database
-
+from fastapi.testclient import TestClient
 from main import app
 
 client = TestClient(app)
 
-def test_dogs_registration():
+def test_users_registration():
     name = ''.join(random.choice(string.ascii_lowercase) for i in range(7))
-    collar_id = str(random.randint(0, 200))
+    password = ''.join(random.choice(string.ascii_lowercase) for i in range(9))
 
-    response = client.post("/dogs/register", json={
-            "name": name,
-            "collar_id": collar_id,
+    response = client.post("/user/registr", json={
+            "login": name,
+            "password": password,
     })
 
     while (response.status_code!=200):
-        name = rand_string = ''.join(random.choice(string.ascii_lowercase) for i in range(7))
-        collar_id = random.randint(0, 200)
+        name = ''.join(random.choice(string.ascii_lowercase) for i in range(7))
+        password = ''.join(random.choice(string.ascii_lowercase) for i in range(9))
 
-        response = client.post("/dogs/register", json={
-            "name": name,
-            "collar_id": collar_id,
+        response = client.post("/user/registr", json={
+            "login": name,
+            "password": password,
         })
 
-    return response.json()["collar_token"]
+    return response.json()["accessToken"]
