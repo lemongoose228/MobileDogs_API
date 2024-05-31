@@ -90,3 +90,18 @@ def get_user_subscr(db: Session, user_login: str, accessToken: str) -> object:
     for i in sp:
         result.append({"subscription_id": str(i.id), "user": user_login, "collar_id": str(i.collar_id)})
     return result
+
+def take_task(db: Session, task: schemas.takeTask) -> Optional[models.responsesT]:
+    user = find_userByToken(db, task.accessToken)
+    taskById = check_taskId(db, task.task_id)
+
+    db.task = models.responsesT(do_user_id=user.id, task_id=task.task_id, answer='')
+
+    taskById.taken = True
+
+    db.add(db.task)
+    db.commit()
+    db.refresh(db.task)
+
+    return db.task
+
