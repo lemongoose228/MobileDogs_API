@@ -39,7 +39,7 @@ logger = get_logger('user_logger')
 @router.post("/user/registr", response_model=schemas.ResponseUser)
 async def UserRegistration(user: schemas.CreateUser, db: DBSession = Depends(session)):
     if crud.find_user(db, user.login):
-        logger.warning(f'Не удалось создать пользователя! Пользователь c логином {user.login} уже существует')
+        logger.error(f'Не удалось создать пользователя! Пользователь c логином {user.login} уже существует')
         raise exceptions.BusyLogin()
     new_user = crud.create_user(db, user)
     result = schemas.ResponseUser(success=True, accessToken=new_user.accessToken)
@@ -51,13 +51,13 @@ async def UserRegistration(user: schemas.CreateUser, db: DBSession = Depends(ses
 async def UserLogin(user: schemas.LoginUser, db: DBSession = Depends(session)):
 
     if not crud.find_user(db, user.login):
-        logger.warning(f'Не удалось войти в аккаунт! Пользователь c логином {user.login} не заргеистрирован')
+        logger.error(f'Не удалось войти в аккаунт! Пользователь c логином {user.login} не заргеистрирован')
         raise exceptions.WrongLogin()
     if not crud.check_password(db, user.login, user.password):
-        logger.warning(f'Не удалось войти в аккаунт! Неправильный пароль')
+        logger.error(f'Не удалось войти в аккаунт! Неправильный пароль')
         raise exceptions.WrongPassword()
     if not crud.check_tokenByLogin(db, user.login, user.accessToken):
-        logger.warning(f'Не удалось войти в аккаунт! Неправильный токен')
+        logger.error(f'Не удалось войти в аккаунт! Неправильный токен')
         raise exceptions.WrongToken()
 
     result = schemas.ResponseUserLogin(success=True, message="Вы успешно вошли в аккаунт")
@@ -67,10 +67,10 @@ async def UserLogin(user: schemas.LoginUser, db: DBSession = Depends(session)):
 @router.post("/user/creatTask", response_model=schemas.CreateTaskResponse)
 async def UserCreateTask(task: schemas.CreateTask, db: DBSession = Depends(session)):
     if not crud1.find_collar(db, task.collar_id):
-        logger.warning(f'Не удалось найти собаку с id ошейника {task.collar_id}')
+        logger.error(f'Не удалось найти собаку с id ошейника {task.collar_id}')
         raise exceptions1.NotExistCollar()
     if not crud.find_token(db, task.accessToken):
-        logger.warning(f'Не удалось найти пользователя с токеном {task.accessToken}')
+        logger.error(f'Не удалось найти пользователя с токеном {task.accessToken}')
         raise exceptions.WrongToken()
 
     task_from_db = crud.create_task(db, task)
@@ -82,84 +82,114 @@ async def UserCreateTask(task: schemas.CreateTask, db: DBSession = Depends(sessi
 @router.post("/user/showDogsTasks", response_model=schemas.showDogsTasksResponse)
 async def showDogsTasks(task: schemas.showDogsTasks, db: DBSession = Depends(session)):
     if not crud1.find_collar(db, task.collar_id):
+        logger.error(f'Ошейник с таким id {task.collar_id} не зарегистрирован')
         raise exceptions1.NotExistCollar()
 
     task_from_db = crud.get_tasks(db, task.collar_id)
 
     result = schemas.showDogsTasksResponse(tasks=task_from_db)
+    logger.info(f'Задания сщбаки c id {task.collar_id} были успешно выведены')
     return result
 
 @router.post("/user/takeTask", response_model=schemas.takeTaskResponse)
 async def takeTask(task: schemas.takeTask, db: DBSession = Depends(session)):
     if not crud.find_token(db, task.accessToken):
+        logger.error(f'Не удалось найти пользователя с токеном {task.accessToken}')
         raise exceptions.WrongToken()
 
     if not crud.check_taskId(db, task.task_id):
+        logger.error(f'Не удалось найти задание с id с токеном {task.task_id}')
         raise exceptions.WrongnTaskId()
 
     crud.take_task(db, task)
 
     result = schemas.takeTaskResponse(success=True, message='Вы успшно взяли задание')
+    logger.info(f'Вы успшно взяли задание c id {task.task_id}')
     return result
 
 
 @router.post("/user/showUserTasks", response_model=schemas.showUserTasksResponse)
 async def showDogsTasks(task: schemas.showUserTasks, db: DBSession = Depends(session)):
     if not crud.find_token(db, task.accessToken):
+        logger.error(f'Не удалось найти пользователя с токеном {task.accessToken}')
         raise exceptions.WrongToken()
 
     task_from_db = crud.get_user_tasks(db, task.accessToken)
 
     result = schemas.showUserTasksResponse(tasks=task_from_db)
+    logger.info(f'Задания для пользователя c токеном {task.accessToken} были успешно выведены')
     return result
 
 @router.post("/user/becomeAdmin", response_model=schemas.becomeAdminResponse)
 async def becomeAdmin(code: schemas.becomeAdmin, db: DBSession = Depends(session)):
     admin = crud.find_user(db, "admin")
     if crud.check_code(code.code):
+        logger.info(f'Пользователь успешно стал администратором')
         result = schemas.becomeAdminResponse(success=True, accessToken=admin.accessToken)
     else:
+        logger.error(f'Код не совпал с кодом администратора')
         raise exceptions.WrongCode()
 
     return result
 
+
 @router.post("/user/subscribe", response_model=schemas.ResponseSubscribtion)
 async def SudscrCreate(subscr: schemas.CreateSubscribtion, db: DBSession = Depends(session)):
-    if not crud_dev.find_collar(db, subscr.collar_id):
+    if not crud1.find_collar(db, subscr.collar_id):
+        logger.error(f'Не удалось найти ошейник с id {subscr.collar_id}')
         raise exceptions.DogDoesntExist()
     if not crud.find_user(db, subscr.user_login):
+        logger.error(f'Не удалось найти пользователя с логином {subscr.user_login}')
         raise exceptions.UserDoesntExist()
     if not crud.check_token(db, subscr.user_login, subscr.accessToken):
-        raise exceptions.WrongToken()
+        logger.error(f'Токен {subscr.accessToken} не совпал с токеном пользователя {subscr.user_login}')
     if crud.find_subscr(db, subscr.user_login, subscr.collar_id):
+        logger.error(f'Не удалось подписаться. Подписка пользователя с логином {subscr.user_login} на эту собаку с id {subscr.collar_id} уже существует')
         raise exceptions.ExistSubscr()
-    
+
     new_subscr = crud.create_subscr(db, subscr)
     result = schemas.ResponseSubscribtion(success=True, accessToken=new_subscr.accessToken)
+    logger.info(f'Подписка пользователя с логином {subscr.user_login} на эту собаку с id {subscr.collar_id} успешно оформлена')
     return result
+
 
 @router.post("/user/unsubscribe", response_model=schemas.ResponseDeleteSubscribtion)
 async def SudscrDelete(subscr: schemas.DeleteSubscribtion, db: DBSession = Depends(session)):
     if not crud1.find_collar(db, subscr.collar_id):
+        logger.error(f'Не удалось найти ошейник с id {subscr.collar_id}')
         raise exceptions.DogDoesntExist()
     if not crud.find_user(db, subscr.user_login):
+        logger.error(f'Не удалось найти пользователя с логином {subscr.user_login}')
         raise exceptions.UserDoesntExist()
     if not crud.check_token(db, subscr.user_login, subscr.accessToken):
+        logger.error(f'Токен {subscr.accessToken} не совпал с токеном пользователя {subscr.user_login}')
         raise exceptions.WrongToken()
     if not crud.find_subscr(db, subscr.user_login, subscr.collar_id):
+        logger.error(f'Не удалось отписаться. Подписка пользователя с логином {subscr.user_login} на эту собаку с id {subscr.collar_id} не существует')
         raise exceptions.SubscrDoesntExist()
 
     deleted_subscr = crud.delete_subscr(db, subscr)
     if deleted_subscr:
         result = schemas.ResponseDeleteSubscribtion(success=True, message="Удаление выполнено успешно")
+        logger.info(f'Отписка пользователя с логином {subscr.user_login} на эту собаку с id {subscr.collar_id} прошла успешно')
     return result
+
 
 @router.post("/user/getUsersSubscribtions", response_model=schemas.GetUserSubscribtionResponse)
 async def users_subscriptions(data_for_subs: schemas.GetUserSubscribtion, db: DBSession = Depends(session)):
     if not crud.find_user(db, data_for_subs.user_login):
+        logger.error(f'Не удалось найти пользователя с логином {data_for_subs.user_login}')
         raise exceptions.UserDoesntExist()
     if not crud.check_token(db, data_for_subs.user_login, data_for_subs.accessToken):
+        logger.error(f'Токен {data_for_subs.accessToken} не совпал с токеном пользователя {data_for_subs.user_login}')
         raise exceptions.WrongToken()
+
+    subs_from_db = crud.get_user_subscr(db, data_for_subs.user_login, data_for_subs.accessToken)
+
+    result = schemas.GetUserSubscribtionResponse(subs=subs_from_db)
+    logger.info(f'Подписки пользователя {data_for_subs.user_login} успешно выведены')
+    return result
+
 
     subs_from_db = crud.get_user_subscr(db, data_for_subs.user_login, data_for_subs.accessToken)
 
