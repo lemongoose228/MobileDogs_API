@@ -27,3 +27,12 @@ async def dog_subscriptions(data_for_subs: schemas.GetDogsSubscribers, db: DBSes
     result = schemas.GetDogsSubscribersResponse(subs=subs_from_db)
     return result
 
+@router.post("/dogs/getDogsGeoPos", response_model=schemas.GetDogsPosResponse)
+async def dog_subscriptions(collar_id: schemas.GetDogsPos, db: DBSession = Depends(session)):
+    if not crud.find_collar(db, collar_id.collar_id):
+        raise exceptions1.DogDoesntExist()
+
+    pos = crud.generate_coordinates(collar_id.collar_id)
+
+    return {"latitude": pos[0],
+            "longitude": pos[1],}
